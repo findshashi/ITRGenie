@@ -10,7 +10,7 @@ export default function Home() {
             <div>
               <div className="inline-flex items-center bg-white/20 rounded-full px-4 py-1.5 text-sm backdrop-blur-sm mb-5">
                 <i className="fas fa-shield-alt mr-2 text-yellow-300"></i>
-                <span>Income Tax e-filing simplified · AY 2025-26</span>
+               <span>Income Tax e-filing simplified · AY 2026-27</span>
               </div>
               <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
                 File Your ITR with <span className="text-yellow-300">real-time tax intelligence</span>
