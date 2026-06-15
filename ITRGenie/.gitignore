@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+.next/
+
+# Environment variables (protects API keys!)
+.env
+.env.local
+.env.production
+.env.development
+
+# Secrets
+*.pem
+*.key
+*.secret
+
+# Build outputs
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
