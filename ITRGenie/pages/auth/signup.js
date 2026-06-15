@@ -1,17 +1,41 @@
 "use client"
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Layout from '../../components/Layout'
+import { supabase } from '../../lib/supabaseClient'
 
 export default function Signup() {
-  const [name, setName] = useState('')
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [fullName, setFullName] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Signup submitted:', { name, email, password })
+    setLoading(true)
+    setError('')
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
+      },
+    })
+
+    if (error) {
+      setError(error.message)
+    } else {
+      alert('Check your email for confirmation!')
+      router.push('/auth/login')
+    }
+    setLoading(false)
   }
 
   return (
@@ -19,56 +43,63 @@ export default function Signup() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
         <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
           <h2 className="text-3xl font-bold text-center mb-2">Create Account</h2>
-          <p className="text-gray-600 text-center mb-8">Start filing your ITR with ITRGenie</p>
-          
+          <p className="text-gray-600 text-center mb-8">Start filing your ITR with TaxGenie</p>
+
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block text-gray-700 mb-2">Full Name</label>
               <input
                 type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-primary"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-indigo-600"
                 placeholder="John Doe"
                 required
               />
             </div>
-            
+
             <div className="mb-4">
               <label className="block text-gray-700 mb-2">Email Address</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-primary"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-indigo-600"
                 placeholder="you@example.com"
                 required
               />
             </div>
-            
+
             <div className="mb-6">
               <label className="block text-gray-700 mb-2">Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-primary"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-indigo-600"
                 placeholder="Create a strong password"
                 required
               />
             </div>
-            
+
             <button
               type="submit"
-              className="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+              disabled={loading}
+              className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition disabled:opacity-50"
             >
-              Create Free Account
+              {loading ? 'Creating account...' : 'Create Free Account'}
             </button>
           </form>
-          
+
           <p className="text-center mt-6 text-gray-600">
             Already have an account?{' '}
-            <Link href="/auth/login" className="text-primary hover:underline">
+            <Link href="/auth/login" className="text-indigo-600 hover:underline">
               Login
             </Link>
           </p>
