@@ -1,16 +1,17 @@
 {
-  "name": "ITRGenie",
+  "name": "taxgenie",
   "version": "1.0.0",
-  "description": "Tax Filing SaaS Application",
+  "description": "TaxGenie - Smart ITR Filing Platform",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start"
   },
   "dependencies": {
-    "next": "14.0.4",
+    "next": "13.5.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "@supabase/supabase-js": "2.39.0",
     "tailwindcss": "3.3.6",
     "autoprefixer": "10.4.16",
     "postcss": "8.4.32"
