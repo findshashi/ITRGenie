@@ -3,6 +3,7 @@
 // FY 2025-26 (AY 2026-27)
 // ============================================
 
+"use client"
 function getValue(id) {
     const element = document.getElementById(id);
     return element ? parseFloat(element.value) || 0 : 0;
