@@ -114,3 +114,56 @@ input[type="number"]:focus::-webkit-outer-spin-button {
 .duration-300 {
   transition-duration: 300ms;
 }
+/* Tax Summary Popup Styles */
+.tax-summary-container {
+  position: relative;
+  cursor: pointer;
+}
+
+.tax-popup {
+  pointer-events: none;
+  transition: all 0.3s ease;
+  max-width: 90vw;
+  width: 380px;
+  right: 0;
+  left: auto;
+}
+
+@media (max-width: 1200px) {
+  .tax-popup { right: -20px; }
+}
+
+@media (max-width: 768px) {
+  .tax-popup { width: 320px; right: -40px; }
+}
+
+.tax-summary-container:hover .tax-popup {
+  pointer-events: auto;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.tax-popup { animation: fadeInUp 0.3s ease-out; }
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  opacity: 0.5;
+}
+
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.animate-bounce-slow { animation: bounce-slow 3s ease-in-out infinite; }
+.animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
