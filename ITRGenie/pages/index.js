@@ -1,13 +1,11 @@
 import Layout from '../components/Layout'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 export default function Home() {
-  const [showGenie, setShowGenie] = useState(true)
-  const [genieMessage, setGenieMessage] = useState("Hi! I'm your TaxGenie assistant! Need help filing your ITR?")
   const [grossIncome, setGrossIncome] = useState(1420000)
   const [deductions, setDeductions] = useState(150000)
 
-  // Tax calculation function
+  // Tax calculation function (new tax regime FY 2025-26)
   const calculateTax = (income, ded) => {
     let taxableIncome = income - ded;
     if (taxableIncome < 0) taxableIncome = 0;
@@ -23,38 +21,11 @@ export default function Home() {
   };
 
   const taxPayable = calculateTax(grossIncome, deductions);
+  const taxableIncome = grossIncome - deductions;
   const taxPercentage = grossIncome > 0 ? Math.min((taxPayable / grossIncome) * 100, 100) : 0;
 
   return (
     <Layout>
-      {/* Genie Bot - Floating Assistant */}
-      {showGenie && (
-        <div className="fixed bottom-6 right-6 z-50">
-          <div className="relative">
-            {/* Speech Bubble */}
-            <div className="absolute bottom-20 right-0 w-72 bg-white rounded-2xl shadow-xl p-4 mb-2 border border-indigo-100 animate-bounce-in">
-              <div className="absolute bottom-[-8px] right-6 w-4 h-4 bg-white rotate-45 border-r border-b border-indigo-100"></div>
-              <p className="text-gray-700 text-sm">{genieMessage}</p>
-              <div className="flex gap-2 mt-3">
-                <button onClick={() => setGenieMessage("You can start filing by clicking 'Get Started' above!")} className="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">Help me file</button>
-                <button onClick={() => setGenieMessage("Check out our pricing plans below!")} className="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">View plans</button>
-                <button onClick={() => setShowGenie(false)} className="text-xs text-gray-400 hover:text-gray-600">✕</button>
-              </div>
-            </div>
-            {/* Genie Lamp/Character */}
-            <div className="cursor-pointer group" onClick={() => setGenieMessage("Need assistance? I'm here to help with your ITR filing!")}>
-              <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
-                <div className="relative">
-                  <i className="fas fa-lamp text-white text-2xl"></i>
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping"></div>
-                </div>
-              </div>
-              <div className="text-center text-xs text-indigo-600 font-semibold mt-1">TaxGenie</div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-gray-900 to-indigo-800 text-white">
         <div className="max-w-7xl mx-auto px-6 py-20 md:py-28 lg:py-32">
@@ -65,7 +36,7 @@ export default function Home() {
                 <span>Income Tax e-filing simplified · AY 2026-27</span>
               </div>
               <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
-                File Your ITR with <span className="text-yellow-300">real-time tax intelligence</span>
+                File Your ITR with <span className="text-yellow-300">ITRGenie</span>
               </h1>
               <p className="text-lg text-gray-100 mt-5 max-w-lg">
                 Automated document upload, draft PDF generation, expert review & end-to-end digital KYC workflow for all ITR forms.
@@ -80,17 +51,17 @@ export default function Home() {
               </div>
             </div>
             
-            {/* Editable Tax Calculator - Inline, No Popup */}
+            {/* Editable Tax Calculator - Inline, real-time */}
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 shadow-xl border border-white/20 hover:bg-white/15 transition-all duration-300">
               <div className="flex items-center justify-between border-b border-white/20 pb-2 mb-4">
                 <span className="font-mono text-sm flex items-center gap-2">
-                  📄 Tax Summary Preview (AY 2026)
+                  📄 ITRGenie Tax Calculator (AY 2026)
                 </span>
                 <i className="fas fa-calculator text-yellow-300"></i>
               </div>
               
               <div className="space-y-4">
-                {/* Editable Gross Income */}
+                {/* Gross Income */}
                 <div className="group">
                   <div className="flex justify-between text-sm mb-1">
                     <label className="text-gray-200">Gross Total Income</label>
@@ -108,7 +79,7 @@ export default function Home() {
                   </div>
                 </div>
                 
-                {/* Editable Deductions */}
+                {/* Deductions */}
                 <div className="group">
                   <div className="flex justify-between text-sm mb-1">
                     <label className="text-gray-200">Chapter VIA Deductions</label>
@@ -131,7 +102,7 @@ export default function Home() {
                 <div className="pt-3 border-t border-white/20">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-200">Taxable Income</span>
-                    <span className="text-white">₹ {(grossIncome - deductions).toLocaleString('en-IN')}</span>
+                    <span className="text-white">₹ {taxableIncome.toLocaleString('en-IN')}</span>
                   </div>
                   <div className="flex justify-between font-semibold mt-2">
                     <span className="text-yellow-300">Tax Payable</span>
@@ -159,64 +130,64 @@ export default function Home() {
         <div className="text-center max-w-3xl mx-auto">
           <span className="text-indigo-600 font-semibold text-sm uppercase tracking-wider">Pricing that grows with you</span>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mt-2">Choose the plan that fits your needs</h2>
-          <p className="text-gray-500 mt-4">From self-filing to expert-assisted plans – for every income profile</p>
+          <p className="text-gray-500 mt-4">From self-filing to expert-assisted – for every income profile</p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-          {/* Plan 1 - Self Filing */}
+          {/* Plan 1 */}
           <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 card-hover">
             <h3 className="text-xl font-bold text-gray-800">Self Filing</h3>
             <div className="mt-2"><span className="text-4xl font-black">₹499</span><span className="text-gray-500"> + GST</span></div>
             <p className="text-sm text-gray-500 mt-1">Do-it-yourself with smart guidance</p>
             <ul className="mt-5 space-y-2 text-sm">
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Step-by-step e-filing</li>
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Automated income import</li>
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Real-time error check</li>
+              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> Step-by-step e-filing</li>
+              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> Automated income import</li>
+              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> Real-time error check</li>
             </ul>
-            <a href="/auth/signup?plan=self-itr"><button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700 transition">Buy now →</button></a>
+            <a href="/auth/signup?plan=self-itr"><button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700">Buy now →</button></a>
           </div>
 
-          {/* Plan 2 - Expert Assisted */}
+          {/* Plan 2 - Most popular */}
           <div className="bg-white rounded-2xl shadow-md border-2 border-indigo-200 p-6 relative card-hover">
             <span className="absolute -top-3 left-6 bg-indigo-600 text-white text-xs px-3 py-1 rounded-full">Most popular</span>
             <h3 className="text-xl font-bold text-gray-800">Expert Assisted</h3>
             <div className="mt-2"><span className="text-4xl font-black">₹1,499</span><span className="text-gray-500"> + GST</span></div>
             <p className="text-sm text-gray-500 mt-1">Tax pro review + filing support</p>
             <ul className="mt-5 space-y-2 text-sm">
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Dedicated tax expert</li>
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Form 16 & AIS analysis</li>
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> 48h filing turnaround</li>
+              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> Dedicated tax expert</li>
+              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> Form 16 & AIS analysis</li>
+              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> 48h filing turnaround</li>
             </ul>
-            <a href="/auth/signup?plan=expert-assisted"><button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700 transition">Buy now →</button></a>
+            <a href="/auth/signup?plan=expert-assisted"><button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700">Buy now →</button></a>
           </div>
 
-          {/* Plan 3 - CA Assisted */}
+          {/* Plan 3 */}
           <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 card-hover">
             <h3 className="text-xl font-bold text-gray-800">CA Assisted</h3>
             <div className="mt-2"><span className="text-4xl font-black">₹2,499</span><span className="text-gray-500"> + GST</span></div>
             <p className="text-sm text-gray-500 mt-1">Complete CA-managed filing</p>
             <ul className="mt-5 space-y-2 text-sm">
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> CA review & compliance</li>
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Capital gains & crypto</li>
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Priority query resolution</li>
+              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> CA review & compliance</li>
+              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> Capital gains & crypto</li>
+              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> Priority query resolution</li>
             </ul>
-            <a href="/auth/signup?plan=ca-assisted"><button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700 transition">Buy now →</button></a>
+            <a href="/auth/signup?plan=ca-assisted"><button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700">Buy now →</button></a>
           </div>
 
-          {/* Plan 4 - Live with Expert */}
+          {/* Plan 4 */}
           <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 card-hover">
             <h3 className="text-xl font-bold text-gray-800">Live with Expert</h3>
             <div className="mt-2"><span className="text-4xl font-black">₹2,999</span><span className="text-gray-500"> + GST</span></div>
             <p className="text-sm text-gray-500 mt-1">Real-time screen share + filing</p>
             <ul className="mt-5 space-y-2 text-sm">
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> 1-on-1 live session</li>
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Same-day finalisation</li>
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> All CA Assisted features</li>
+              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> 1-on-1 live session</li>
+              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> Same-day finalisation</li>
+              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> All CA Assisted features</li>
             </ul>
-            <a href="/auth/signup?plan=live-expert"><button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700 transition">Buy now →</button></a>
+            <a href="/auth/signup?plan=live-expert"><button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700">Buy now →</button></a>
           </div>
 
-          {/* Plan 5 - HNI Global */}
+          {/* Plan 5 */}
           <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 card-hover">
             <div className="flex items-center gap-2 mb-2">
               <i className="fas fa-star text-yellow-500"></i>
@@ -225,24 +196,32 @@ export default function Home() {
             <h3 className="text-xl font-bold text-gray-800">HNI Global</h3>
             <div className="mt-2"><span className="text-4xl font-black">₹4,999</span><span className="text-gray-500 line-through ml-2">₹9,999</span><span className="text-green-600 text-sm ml-2">-50%</span></div>
             <ul className="mt-5 space-y-2 text-sm">
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> ESOPs & RSU gains</li>
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> US Stocks & foreign income</li>
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Strategic tax advisory</li>
+              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> ESOPs & RSU gains</li>
+              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> US Stocks & foreign income</li>
+              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> Strategic tax advisory</li>
             </ul>
-            <a href="/auth/signup?plan=hni-global"><button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700 transition">Buy now →</button></a>
+            <a href="/auth/signup?plan=hni-global"><button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700">Buy now →</button></a>
           </div>
 
-          {/* Plan 6 - Enterprise */}
+          {/* Plan 6 */}
           <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 card-hover">
             <h3 className="text-xl font-bold text-gray-800">Enterprise</h3>
             <div className="mt-2"><span className="text-4xl font-black">Custom</span></div>
             <ul className="mt-5 space-y-2 text-sm">
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Bulk filing support</li>
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Dedicated account manager</li>
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> API integration</li>
+              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> Bulk filing support</li>
+              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> Dedicated account manager</li>
+              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> API integration</li>
             </ul>
-            <a href="/auth/signup?plan=enterprise"><button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700 transition">Contact Sales →</button></a>
+            <a href="/auth/signup?plan=enterprise"><button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700">Contact Sales →</button></a>
           </div>
+        </div>
+
+        {/* Confused about plan card */}
+        <div className="mt-12 bg-gradient-to-br from-indigo-50 to-white rounded-2xl shadow-md border border-indigo-100 p-6 flex flex-col justify-center items-center text-center">
+          <i className="fas fa-question-circle text-4xl text-indigo-500 mb-3"></i>
+          <h3 className="text-xl font-bold text-gray-800">Confused about the right plan?</h3>
+          <p className="text-gray-600 text-sm mt-2">Share your income sources & get a personalised recommendation.</p>
+          <button className="mt-5 bg-indigo-600 text-white px-5 py-2 rounded-full font-medium hover:bg-indigo-700">Talk to expert →</button>
         </div>
       </div>
 
@@ -277,7 +256,7 @@ export default function Home() {
       {/* How it Works Section */}
       <div id="how-it-works" className="bg-gray-50 py-16 border-t">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-2xl font-bold text-gray-800">How TaxGenie Works</h2>
+          <h2 className="text-2xl font-bold text-gray-800">How ITRGenie Works</h2>
           <div className="grid md:grid-cols-4 gap-6 mt-10">
             <div><i className="fas fa-user-plus text-3xl text-indigo-500"></i><h4 className="font-bold mt-2">1. Signup</h4></div>
             <div><i className="fas fa-id-card text-3xl text-indigo-500"></i><h4 className="font-bold mt-2">2. Complete KYC</h4></div>
@@ -286,17 +265,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes bounce-in {
-          0% { opacity: 0; transform: scale(0.3); }
-          50% { opacity: 1; transform: scale(1.05); }
-          100% { transform: scale(1); }
-        }
-        .animate-bounce-in {
-          animation: bounce-in 0.5s ease-out;
-        }
-      `}</style>
     </Layout>
   )
 }
