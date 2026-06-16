@@ -1,8 +1,60 @@
 import Layout from '../components/Layout'
+import { useState, useEffect } from 'react'
 
 export default function Home() {
+  const [showGenie, setShowGenie] = useState(true)
+  const [genieMessage, setGenieMessage] = useState("Hi! I'm your TaxGenie assistant! Need help filing your ITR?")
+  const [grossIncome, setGrossIncome] = useState(1420000)
+  const [deductions, setDeductions] = useState(150000)
+
+  // Tax calculation function
+  const calculateTax = (income, ded) => {
+    let taxableIncome = income - ded;
+    if (taxableIncome < 0) taxableIncome = 0;
+    let tax = 0;
+    if (taxableIncome <= 400000) tax = 0;
+    else if (taxableIncome <= 800000) tax = (taxableIncome - 400000) * 0.05;
+    else if (taxableIncome <= 1200000) tax = 20000 + (taxableIncome - 800000) * 0.10;
+    else if (taxableIncome <= 1600000) tax = 60000 + (taxableIncome - 1200000) * 0.15;
+    else if (taxableIncome <= 2000000) tax = 120000 + (taxableIncome - 1600000) * 0.20;
+    else tax = 200000 + (taxableIncome - 2000000) * 0.30;
+    const cess = tax * 0.04;
+    return Math.round(tax + cess);
+  };
+
+  const taxPayable = calculateTax(grossIncome, deductions);
+  const taxPercentage = grossIncome > 0 ? Math.min((taxPayable / grossIncome) * 100, 100) : 0;
+
   return (
     <Layout>
+      {/* Genie Bot - Floating Assistant */}
+      {showGenie && (
+        <div className="fixed bottom-6 right-6 z-50">
+          <div className="relative">
+            {/* Speech Bubble */}
+            <div className="absolute bottom-20 right-0 w-72 bg-white rounded-2xl shadow-xl p-4 mb-2 border border-indigo-100 animate-bounce-in">
+              <div className="absolute bottom-[-8px] right-6 w-4 h-4 bg-white rotate-45 border-r border-b border-indigo-100"></div>
+              <p className="text-gray-700 text-sm">{genieMessage}</p>
+              <div className="flex gap-2 mt-3">
+                <button onClick={() => setGenieMessage("You can start filing by clicking 'Get Started' above!")} className="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">Help me file</button>
+                <button onClick={() => setGenieMessage("Check out our pricing plans below!")} className="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">View plans</button>
+                <button onClick={() => setShowGenie(false)} className="text-xs text-gray-400 hover:text-gray-600">✕</button>
+              </div>
+            </div>
+            {/* Genie Lamp/Character */}
+            <div className="cursor-pointer group" onClick={() => setGenieMessage("Need assistance? I'm here to help with your ITR filing!")}>
+              <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
+                <div className="relative">
+                  <i className="fas fa-lamp text-white text-2xl"></i>
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping"></div>
+                </div>
+              </div>
+              <div className="text-center text-xs text-indigo-600 font-semibold mt-1">TaxGenie</div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-gray-900 to-indigo-800 text-white">
         <div className="max-w-7xl mx-auto px-6 py-20 md:py-28 lg:py-32">
@@ -28,81 +80,74 @@ export default function Home() {
               </div>
             </div>
             
-            {/* Interactive Tax Summary - Fixed Popup Position */}
-            <div className="relative hidden md:block tax-summary-container">
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 shadow-xl border border-white/20 cursor-pointer group transition-all duration-300 hover:scale-105 hover:bg-white/20">
-                <div className="flex items-center justify-between border-b border-white/20 pb-2 mb-3">
-                  <span className="font-mono text-sm flex items-center gap-2">
-                    📄 Tax Summary Preview (AY 2026)
-                    <i className="fas fa-info-circle text-xs opacity-70 group-hover:opacity-100"></i>
-                  </span>
-                  <i className="fas fa-chart-line text-indigo-200 group-hover:text-yellow-300 transition"></i>
-                </div>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between"><span>Gross Total Income</span><span id="grossIncomeDisplay">₹ 14,20,000</span></div>
-                  <div className="flex justify-between"><span>Chapter VIA Deductions</span><span id="deductionsDisplay">₹ 1,50,000</span></div>
-                  <div className="flex justify-between font-semibold"><span>Tax Payable</span><span id="taxPayableDisplay">₹ 1,58,700</span></div>
-                </div>
-                <div className="mt-3 h-2 w-full bg-gray-300/40 rounded-full">
-                  <div id="taxProgressBar" className="w-3/5 h-2 bg-green-400 rounded-full transition-all duration-300"></div>
-                </div>
-                <p className="text-xs mt-2 text-indigo-100 flex items-center gap-1">
-                  <i className="fas fa-calculator text-yellow-300"></i> Real-time calculation engine
-                  <i className="fas fa-edit text-xs opacity-70 ml-auto"> hover to edit</i>
-                </p>
+            {/* Editable Tax Calculator - Inline, No Popup */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 shadow-xl border border-white/20 hover:bg-white/15 transition-all duration-300">
+              <div className="flex items-center justify-between border-b border-white/20 pb-2 mb-4">
+                <span className="font-mono text-sm flex items-center gap-2">
+                  📄 Tax Summary Preview (AY 2026)
+                </span>
+                <i className="fas fa-calculator text-yellow-300"></i>
               </div>
-
-              {/* Popup Card - Positioned to stay on screen */}
-              <div className="tax-popup absolute bottom-full right-0 mb-2 w-96 bg-gray-900 rounded-xl shadow-2xl border border-indigo-500 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 pointer-events-auto">
-                <div className="p-5">
-                  <div className="flex items-center justify-between border-b border-gray-700 pb-2 mb-3">
-                    <h4 className="text-white font-semibold text-sm">✏️ Edit Tax Details</h4>
-                    <i className="fas fa-sliders-h text-indigo-400 text-sm"></i>
+              
+              <div className="space-y-4">
+                {/* Editable Gross Income */}
+                <div className="group">
+                  <div className="flex justify-between text-sm mb-1">
+                    <label className="text-gray-200">Gross Total Income</label>
+                    <span className="text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition">✏️ click to edit</span>
                   </div>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <label className="text-gray-300 text-xs block mb-1">Gross Total Income (₹)</label>
-                      <input 
-                        type="number" 
-                        id="grossIncomeInput" 
-                        defaultValue="1420000"
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-indigo-500 transition"
-                        placeholder="Enter total income"
-                      />
-                    </div>
-                    
-                    <div>
-                      <label className="text-gray-300 text-xs block mb-1">Chapter VIA Deductions (₹)</label>
-                      <p className="text-xs text-gray-500 mb-1">80C, 80D, 80E, 80G, etc.</p>
-                      <input 
-                        type="number" 
-                        id="deductionsInput" 
-                        defaultValue="150000"
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-indigo-500 transition"
-                        placeholder="Enter total deductions"
-                      />
-                    </div>
-                    
-                    <div className="pt-3 border-t border-gray-700">
-                      <div className="flex justify-between text-sm mb-3">
-                        <span className="text-gray-300">Tax Payable:</span>
-                        <span id="taxPreview" className="text-yellow-300 font-bold">₹ 1,58,700</span>
-                      </div>
-                      <button 
-                        id="updateTaxBtn"
-                        className="w-full bg-indigo-600 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-indigo-700 transition"
-                      >
-                        <i className="fas fa-sync-alt mr-2"></i>Update Calculation
-                      </button>
-                    </div>
-                    
-                    <p className="text-xs text-gray-500 text-center pt-1">
-                      <i className="fas fa-shield-alt"></i> Calculations based on new tax regime
-                    </p>
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-300">₹</span>
+                    <input 
+                      type="number" 
+                      value={grossIncome}
+                      onChange={(e) => setGrossIncome(Number(e.target.value) || 0)}
+                      className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-400 focus:bg-white/30 transition"
+                      onFocus={(e) => e.target.select()}
+                    />
                   </div>
                 </div>
-                <div className="absolute -bottom-2 right-6 w-4 h-4 bg-gray-900 rotate-45 border-r border-b border-indigo-500"></div>
+                
+                {/* Editable Deductions */}
+                <div className="group">
+                  <div className="flex justify-between text-sm mb-1">
+                    <label className="text-gray-200">Chapter VIA Deductions</label>
+                    <span className="text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition">✏️ click to edit</span>
+                  </div>
+                  <p className="text-xs text-gray-400 mb-1">80C, 80D, 80E, 80G, etc.</p>
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-300">₹</span>
+                    <input 
+                      type="number" 
+                      value={deductions}
+                      onChange={(e) => setDeductions(Number(e.target.value) || 0)}
+                      className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-400 focus:bg-white/30 transition"
+                      onFocus={(e) => e.target.select()}
+                    />
+                  </div>
+                </div>
+                
+                {/* Results */}
+                <div className="pt-3 border-t border-white/20">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-200">Taxable Income</span>
+                    <span className="text-white">₹ {(grossIncome - deductions).toLocaleString('en-IN')}</span>
+                  </div>
+                  <div className="flex justify-between font-semibold mt-2">
+                    <span className="text-yellow-300">Tax Payable</span>
+                    <span className="text-yellow-300 font-bold text-lg">₹ {taxPayable.toLocaleString('en-IN')}</span>
+                  </div>
+                </div>
+                
+                {/* Progress Bar */}
+                <div className="mt-2">
+                  <div className="h-2 w-full bg-gray-500/40 rounded-full overflow-hidden">
+                    <div className="h-full bg-green-400 rounded-full transition-all duration-300" style={{ width: `${taxPercentage}%` }}></div>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-2 text-center flex items-center justify-center gap-1">
+                    <i className="fas fa-sync-alt text-yellow-300 text-xs"></i> Real-time calculation · Updates as you type
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -118,7 +163,6 @@ export default function Home() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-          
           {/* Plan 1 - Self Filing */}
           <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 card-hover">
             <h3 className="text-xl font-bold text-gray-800">Self Filing</h3>
@@ -128,11 +172,8 @@ export default function Home() {
               <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Step-by-step e-filing</li>
               <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Automated income import</li>
               <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Real-time error check</li>
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> ITR-V download</li>
             </ul>
-            <a href="/auth/signup?plan=self-itr">
-              <button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700 transition">Buy now →</button>
-            </a>
+            <a href="/auth/signup?plan=self-itr"><button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700 transition">Buy now →</button></a>
           </div>
 
           {/* Plan 2 - Expert Assisted */}
@@ -144,12 +185,9 @@ export default function Home() {
             <ul className="mt-5 space-y-2 text-sm">
               <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Dedicated tax expert</li>
               <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Form 16 & AIS analysis</li>
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Capital gains support</li>
               <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> 48h filing turnaround</li>
             </ul>
-            <a href="/auth/signup?plan=expert-assisted">
-              <button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700 transition">Buy now →</button>
-            </a>
+            <a href="/auth/signup?plan=expert-assisted"><button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700 transition">Buy now →</button></a>
           </div>
 
           {/* Plan 3 - CA Assisted */}
@@ -159,13 +197,10 @@ export default function Home() {
             <p className="text-sm text-gray-500 mt-1">Complete CA-managed filing</p>
             <ul className="mt-5 space-y-2 text-sm">
               <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> CA review & compliance</li>
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Salary + rental + interest</li>
               <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Capital gains & crypto</li>
               <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Priority query resolution</li>
             </ul>
-            <a href="/auth/signup?plan=ca-assisted">
-              <button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700 transition">Buy now →</button>
-            </a>
+            <a href="/auth/signup?plan=ca-assisted"><button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700 transition">Buy now →</button></a>
           </div>
 
           {/* Plan 4 - Live with Expert */}
@@ -175,13 +210,10 @@ export default function Home() {
             <p className="text-sm text-gray-500 mt-1">Real-time screen share + filing</p>
             <ul className="mt-5 space-y-2 text-sm">
               <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> 1-on-1 live session</li>
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> On-the-spot optimization</li>
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> All CA Assisted features</li>
               <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Same-day finalisation</li>
+              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> All CA Assisted features</li>
             </ul>
-            <a href="/auth/signup?plan=live-expert">
-              <button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700 transition">Buy now →</button>
-            </a>
+            <a href="/auth/signup?plan=live-expert"><button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700 transition">Buy now →</button></a>
           </div>
 
           {/* Plan 5 - HNI Global */}
@@ -192,100 +224,52 @@ export default function Home() {
             </div>
             <h3 className="text-xl font-bold text-gray-800">HNI Global</h3>
             <div className="mt-2"><span className="text-4xl font-black">₹4,999</span><span className="text-gray-500 line-through ml-2">₹9,999</span><span className="text-green-600 text-sm ml-2">-50%</span></div>
-            <p className="text-sm text-gray-500 mt-1">High-Net-Worth & cross-border</p>
             <ul className="mt-5 space-y-2 text-sm">
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> All Live with Expert features</li>
               <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> ESOPs & RSU gains</li>
               <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> US Stocks & foreign income</li>
               <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Strategic tax advisory</li>
             </ul>
-            <a href="/auth/signup?plan=hni-global">
-              <button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700 transition">Buy now →</button>
-            </a>
+            <a href="/auth/signup?plan=hni-global"><button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700 transition">Buy now →</button></a>
           </div>
 
           {/* Plan 6 - Enterprise */}
           <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 card-hover">
             <h3 className="text-xl font-bold text-gray-800">Enterprise</h3>
             <div className="mt-2"><span className="text-4xl font-black">Custom</span></div>
-            <p className="text-sm text-gray-500 mt-1">For businesses & large portfolios</p>
             <ul className="mt-5 space-y-2 text-sm">
               <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Bulk filing support</li>
               <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> Dedicated account manager</li>
               <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> API integration</li>
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500 w-4"></i> 24/7 priority support</li>
             </ul>
-            <a href="/auth/signup?plan=enterprise">
-              <button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700 transition">Contact Sales →</button>
-            </a>
+            <a href="/auth/signup?plan=enterprise"><button className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-xl font-medium hover:bg-indigo-700 transition">Contact Sales →</button></a>
           </div>
-        </div>
-
-        {/* Confused about plan card */}
-        <div className="mt-12 bg-gradient-to-br from-indigo-50 to-white rounded-2xl shadow-md border border-indigo-100 p-6 flex flex-col justify-center items-center text-center">
-          <i className="fas fa-question-circle text-4xl text-indigo-500 mb-3"></i>
-          <h3 className="text-xl font-bold text-gray-800">Confused about the right plan?</h3>
-          <p className="text-gray-600 text-sm mt-2">Share your income sources & get a personalised recommendation.</p>
-          <button className="mt-5 bg-indigo-600 text-white px-5 py-2 rounded-full font-medium hover:bg-indigo-700 transition">Talk to expert →</button>
-          <div className="mt-4 text-xs text-gray-500"><i className="fas fa-heart text-red-400"></i> Trusted by over 2 million+ taxpayers</div>
         </div>
       </div>
 
       {/* Live with Expert Section */}
-      <div className="max-w-7xl mx-auto px-6 py-20">
+      <div className="max-w-7xl mx-auto px-6 pb-20">
         <div className="relative bg-gradient-to-r from-indigo-600 to-purple-700 rounded-3xl overflow-hidden shadow-2xl">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 left-0 w-64 h-64 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/3 translate-y-1/3"></div>
-            <div className="absolute top-1/2 left-1/2 w-48 h-48 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-          </div>
-          
-          <div className="absolute top-10 right-10 animate-bounce-slow">
-            <i className="fas fa-video text-white/20 text-7xl"></i>
-          </div>
-          <div className="absolute bottom-10 left-10 animate-pulse-slow">
-            <i className="fas fa-headset text-white/20 text-6xl"></i>
-          </div>
-          
           <div className="relative z-10 grid md:grid-cols-2 gap-8 p-8 md:p-12">
             <div className="text-white">
               <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm mb-6">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                </span>
+                <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span></span>
                 <span>LIVE SESSION</span>
-                <span className="text-yellow-300 font-bold">● LIMITED SLOTS</span>
               </div>
-              
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Live with an Expert</h2>
-              <p className="text-xl mb-6 text-indigo-100">Prefer live filing? Connect with a tax expert on Google Meet or Zoom</p>
-              <p className="text-indigo-100 mb-8">Complete your ITR in one sitting while an expert guides you through every step.</p>
-              
+              <p className="text-indigo-100 mb-6">Connect with a tax expert on Google Meet or Zoom. Complete your ITR in one sitting.</p>
               <div className="space-y-3 mb-8">
-                <div className="flex items-center gap-3"><div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center"><i className="fas fa-check text-white text-sm"></i></div><span>Google Meet or Zoom session</span></div>
-                <div className="flex items-center gap-3"><div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center"><i className="fas fa-check text-white text-sm"></i></div><span>Expert files while you watch and learn</span></div>
-                <div className="flex items-center gap-3"><div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center"><i className="fas fa-check text-white text-sm"></i></div><span>Same-day completion guaranteed</span></div>
-                <div className="flex items-center gap-3"><div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center"><i className="fas fa-check text-white text-sm"></i></div><span>Get your queries answered instantly</span></div>
+                <div className="flex items-center gap-3"><i className="fas fa-check-circle text-yellow-300"></i><span>Google Meet or Zoom session</span></div>
+                <div className="flex items-center gap-3"><i className="fas fa-check-circle text-yellow-300"></i><span>Expert files while you watch</span></div>
+                <div className="flex items-center gap-3"><i className="fas fa-check-circle text-yellow-300"></i><span>Same-day completion</span></div>
               </div>
-              
-              <div className="flex flex-wrap gap-4">
-                <a href="/auth/signup?plan=live-expert"><button className="bg-white text-indigo-700 px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-gray-100 transition transform hover:scale-105">🎥 Book Live ITR Session →</button></a>
-                <button className="border-2 border-white/50 text-white px-6 py-3 rounded-xl font-medium hover:bg-white/10 transition"><i className="fas fa-phone-alt mr-2"></i> Call: +91-98765-43210</button>
-              </div>
+              <a href="/auth/signup?plan=live-expert"><button className="bg-white text-indigo-700 px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-gray-100 transition">🎥 Book Live ITR Session →</button></a>
             </div>
-            
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center hover:bg-white/20 transition"><i className="fas fa-video text-3xl text-yellow-300 mb-2"></i><p className="text-white font-semibold">Live Screen Share</p><p className="text-xs text-indigo-100">Watch expert fill your ITR</p></div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center hover:bg-white/20 transition"><i className="fas fa-clock text-3xl text-yellow-300 mb-2"></i><p className="text-white font-semibold">60-Minute Session</p><p className="text-xs text-indigo-100">Complete filing in 1 hour</p></div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center hover:bg-white/20 transition"><i className="fas fa-shield-alt text-3xl text-yellow-300 mb-2"></i><p className="text-white font-semibold">100% Secure</p><p className="text-xs text-indigo-100">Bank-grade encryption</p></div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center hover:bg-white/20 transition"><i className="fas fa-file-pdf text-3xl text-yellow-300 mb-2"></i><p className="text-white font-semibold">Instant Download</p><p className="text-xs text-indigo-100">Get ITR-V & acknowledgment</p></div>
+              <div className="bg-white/10 rounded-xl p-4 text-center"><i className="fas fa-video text-3xl text-yellow-300 mb-2"></i><p className="text-white font-semibold">Live Screen Share</p></div>
+              <div className="bg-white/10 rounded-xl p-4 text-center"><i className="fas fa-clock text-3xl text-yellow-300 mb-2"></i><p className="text-white font-semibold">60-Minute Session</p></div>
+              <div className="bg-white/10 rounded-xl p-4 text-center"><i className="fas fa-shield-alt text-3xl text-yellow-300 mb-2"></i><p className="text-white font-semibold">100% Secure</p></div>
+              <div className="bg-white/10 rounded-xl p-4 text-center"><i className="fas fa-file-pdf text-3xl text-yellow-300 mb-2"></i><p className="text-white font-semibold">Instant Download</p></div>
             </div>
-          </div>
-          
-          <div className="relative z-10 bg-indigo-700/50 backdrop-blur-sm px-6 py-3 flex justify-between items-center flex-wrap gap-3">
-            <div className="flex items-center gap-4"><i className="fas fa-star text-yellow-400"></i><span className="text-white text-sm">Trusted by over 50,000+ taxpayers</span><i className="fas fa-star text-yellow-400"></i></div>
-            <div className="flex items-center gap-2"><span className="text-yellow-300 font-bold">LIVE</span><span className="text-white text-sm">Limited slots available today</span></div>
           </div>
         </div>
       </div>
@@ -295,72 +279,24 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h2 className="text-2xl font-bold text-gray-800">How TaxGenie Works</h2>
           <div className="grid md:grid-cols-4 gap-6 mt-10">
-            <div><i className="fas fa-user-plus text-3xl text-indigo-500"></i><h4 className="font-bold mt-2">1. Signup</h4><p className="text-sm text-gray-500">Create your account</p></div>
-            <div><i className="fas fa-id-card text-3xl text-indigo-500"></i><h4 className="font-bold mt-2">2. Complete KYC</h4><p className="text-sm text-gray-500">Submit PAN & Aadhaar</p></div>
-            <div><i className="fas fa-file-alt text-3xl text-indigo-500"></i><h4 className="font-bold mt-2">3. Fill ITR Form</h4><p className="text-sm text-gray-500">Enter income & deductions</p></div>
-            <div><i className="fas fa-credit-card text-3xl text-indigo-500"></i><h4 className="font-bold mt-2">4. Payment & File</h4><p className="text-sm text-gray-500">Secure payment & e-filing</p></div>
-          </div>
-          <div className="mt-8 p-4 bg-indigo-50 rounded-2xl inline-flex items-center gap-2 flex-wrap justify-center">
-            <i className="fas fa-envelope-open-text text-indigo-600"></i>
-            <span className="text-gray-700">Email notifications at every stage: KYC, upload, filing status & ITR acknowledgement</span>
+            <div><i className="fas fa-user-plus text-3xl text-indigo-500"></i><h4 className="font-bold mt-2">1. Signup</h4></div>
+            <div><i className="fas fa-id-card text-3xl text-indigo-500"></i><h4 className="font-bold mt-2">2. Complete KYC</h4></div>
+            <div><i className="fas fa-file-alt text-3xl text-indigo-500"></i><h4 className="font-bold mt-2">3. Fill ITR Form</h4></div>
+            <div><i className="fas fa-credit-card text-3xl text-indigo-500"></i><h4 className="font-bold mt-2">4. Payment & File</h4></div>
           </div>
         </div>
       </div>
 
-      {/* Interactive Tax Calculator Script */}
-      <script dangerouslySetInnerHTML={{
-        __html: `
-          (function() {
-            function calculateTax(income, deductions) {
-              let taxableIncome = income - deductions;
-              if (taxableIncome < 0) taxableIncome = 0;
-              let tax = 0;
-              if (taxableIncome <= 400000) tax = 0;
-              else if (taxableIncome <= 800000) tax = (taxableIncome - 400000) * 0.05;
-              else if (taxableIncome <= 1200000) tax = 20000 + (taxableIncome - 800000) * 0.10;
-              else if (taxableIncome <= 1600000) tax = 60000 + (taxableIncome - 1200000) * 0.15;
-              else if (taxableIncome <= 2000000) tax = 120000 + (taxableIncome - 1600000) * 0.20;
-              else tax = 200000 + (taxableIncome - 2000000) * 0.30;
-              const cess = tax * 0.04;
-              return { tax: Math.round(tax + cess) };
-            }
-            
-            function formatCurrency(amount) {
-              return '₹ ' + amount.toLocaleString('en-IN');
-            }
-            
-            function updateTaxSummary() {
-              const grossIncome = parseInt(document.getElementById('grossIncomeInput')?.value) || 0;
-              const deductions = parseInt(document.getElementById('deductionsInput')?.value) || 0;
-              const result = calculateTax(grossIncome, deductions);
-              
-              const grossDisplay = document.getElementById('grossIncomeDisplay');
-              const deductionsDisplay = document.getElementById('deductionsDisplay');
-              const taxDisplay = document.getElementById('taxPayableDisplay');
-              const taxPreview = document.getElementById('taxPreview');
-              const progressBar = document.getElementById('taxProgressBar');
-              
-              if (grossDisplay) grossDisplay.textContent = formatCurrency(grossIncome);
-              if (deductionsDisplay) deductionsDisplay.textContent = formatCurrency(deductions);
-              if (taxDisplay) taxDisplay.textContent = formatCurrency(result.tax);
-              if (taxPreview) taxPreview.textContent = formatCurrency(result.tax);
-              
-              if (progressBar && grossIncome > 0) {
-                const percentage = Math.min((result.tax / grossIncome) * 100, 100);
-                progressBar.style.width = percentage + '%';
-              }
-            }
-            
-            function init() {
-              const updateBtn = document.getElementById('updateTaxBtn');
-              if (updateBtn) updateBtn.addEventListener('click', updateTaxSummary);
-            }
-            
-            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-            else init();
-          })();
-        `
-      }} />
+      <style jsx>{`
+        @keyframes bounce-in {
+          0% { opacity: 0; transform: scale(0.3); }
+          50% { opacity: 1; transform: scale(1.05); }
+          100% { transform: scale(1); }
+        }
+        .animate-bounce-in {
+          animation: bounce-in 0.5s ease-out;
+        }
+      `}</style>
     </Layout>
   )
 }
