@@ -27,21 +27,85 @@ export default function Home() {
                 </a>
               </div>
             </div>
-            <div className="relative hidden md:block">
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 shadow-xl border border-white/20">
-                <div className="flex items-center justify-between border-b border-white/20 pb-2 mb-3">
-                  <span className="font-mono text-sm">📄 Tax Summary Preview (AY 2025)</span>
-                  <i className="fas fa-chart-line text-indigo-200"></i>
-                </div>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between"><span>Gross Total Income</span><span>₹ 14,20,000</span></div>
-                  <div className="flex justify-between"><span>Deductions 80C</span><span>₹ 1,50,000</span></div>
-                  <div className="flex justify-between font-semibold"><span>Tax Payable</span><span>₹ 1,58,700</span></div>
-                </div>
-                <p className="text-xs mt-2 text-indigo-100">✓ Real-time calculation engine</p>
-              </div>
-            </div>
+            <div className="relative hidden md:block tax-summary-container">
+  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 shadow-xl border border-white/20 cursor-pointer group transition-all duration-300 hover:scale-105 hover:bg-white/20">
+    <div className="flex items-center justify-between border-b border-white/20 pb-2 mb-3">
+      <span className="font-mono text-sm flex items-center gap-2">
+        📄 Tax Summary Preview (AY 2026)
+        <i className="fas fa-info-circle text-xs opacity-70 group-hover:opacity-100"></i>
+      </span>
+      <i className="fas fa-chart-line text-indigo-200 group-hover:text-yellow-300 transition"></i>
+    </div>
+    <div className="space-y-2 text-sm">
+      <div className="flex justify-between"><span>Gross Total Income</span><span id="grossIncomeDisplay">₹ 14,20,000</span></div>
+      <div className="flex justify-between"><span>Chapter VIA Deductions</span><span id="deductionsDisplay">₹ 1,50,000</span></div>
+      <div className="flex justify-between font-semibold"><span>Tax Payable</span><span id="taxPayableDisplay">₹ 1,58,700</span></div>
+    </div>
+    <div className="mt-3 h-2 w-full bg-gray-300/40 rounded-full">
+      <div id="taxProgressBar" className="w-3/5 h-2 bg-green-400 rounded-full transition-all duration-300"></div>
+    </div>
+    <p className="text-xs mt-2 text-indigo-100 flex items-center gap-1">
+      <i className="fas fa-calculator text-yellow-300"></i> Real-time calculation engine
+      <i className="fas fa-edit text-xs opacity-70 ml-auto"> hover to edit</i>
+    </p>
+  </div>
+
+  {/* Popup Card that appears on hover */}
+  <div className="tax-popup absolute bottom-full left-0 mb-2 w-80 bg-gray-900 rounded-xl shadow-2xl border border-indigo-500 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 pointer-events-auto">
+    <div className="p-4">
+      <div className="flex items-center justify-between border-b border-gray-700 pb-2 mb-3">
+        <h4 className="text-white font-semibold text-sm">✏️ Edit Tax Details</h4>
+        <i className="fas fa-sliders-h text-indigo-400 text-sm"></i>
+      </div>
+      
+      {/* Editable Fields */}
+      <div className="space-y-3">
+        <div>
+          <label className="text-gray-300 text-xs block mb-1">Gross Total Income (₹)</label>
+          <input 
+            type="number" 
+            id="grossIncomeInput" 
+            defaultValue="1420000"
+            className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-indigo-500 transition"
+            placeholder="Enter total income"
+          />
+        </div>
+        
+        <div>
+          <label className="text-gray-300 text-xs block mb-1">Chapter VIA Deductions (₹)</label>
+          <p className="text-xs text-gray-500 mb-1">80C, 80D, 80E, 80G, etc.</p>
+          <input 
+            type="number" 
+            id="deductionsInput" 
+            defaultValue="150000"
+            className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-indigo-500 transition"
+            placeholder="Enter total deductions"
+          />
+        </div>
+        
+        <div className="pt-2 border-t border-gray-700">
+          <div className="flex justify-between text-sm mb-2">
+            <span className="text-gray-300">Tax Payable:</span>
+            <span id="taxPreview" className="text-yellow-300 font-bold">₹ 1,58,700</span>
           </div>
+          <button 
+            id="updateTaxBtn"
+            className="w-full bg-indigo-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition"
+          >
+            <i className="fas fa-sync-alt mr-2"></i>Update Calculation
+          </button>
+        </div>
+        
+        <p className="text-xs text-gray-500 text-center pt-1">
+          <i className="fas fa-shield-alt"></i> Calculations are real-time based on new tax regime
+        </p>
+      </div>
+    </div>
+    
+    {/* Popup Arrow */}
+    <div className="absolute -bottom-2 left-8 w-4 h-4 bg-gray-900 rotate-45 border-r border-b border-indigo-500"></div>
+  </div>
+</div>          </div>
         </div>
       </section>
 
@@ -307,6 +371,102 @@ export default function Home() {
           </div>
         </div>
       </div>
+              {/* Interactive Tax Calculator Script */}
+      <script dangerouslySetInnerHTML={{
+        __html: `
+          (function() {
+            // Tax calculation function based on new tax regime
+            function calculateTax(income, deductions) {
+              let taxableIncome = income - deductions;
+              if (taxableIncome < 0) taxableIncome = 0;
+              
+              let tax = 0;
+              // New tax regime slabs (FY 2025-26)
+              if (taxableIncome <= 400000) {
+                tax = 0;
+              } else if (taxableIncome <= 800000) {
+                tax = (taxableIncome - 400000) * 0.05;
+              } else if (taxableIncome <= 1200000) {
+                tax = 20000 + (taxableIncome - 800000) * 0.10;
+              } else if (taxableIncome <= 1600000) {
+                tax = 60000 + (taxableIncome - 1200000) * 0.15;
+              } else if (taxableIncome <= 2000000) {
+                tax = 120000 + (taxableIncome - 1600000) * 0.20;
+              } else {
+                tax = 200000 + (taxableIncome - 2000000) * 0.30;
+              }
+              
+              // Add 4% cess
+              const cess = tax * 0.04;
+              const totalTax = Math.round(tax + cess);
+              
+              return {
+                tax: totalTax,
+                taxableIncome: taxableIncome,
+                taxBeforeCess: tax
+              };
+            }
+            
+            function formatCurrency(amount) {
+              return '₹ ' + amount.toLocaleString('en-IN');
+            }
+            
+            function updateTaxSummary() {
+              const grossIncome = parseInt(document.getElementById('grossIncomeInput')?.value) || 0;
+              const deductions = parseInt(document.getElementById('deductionsInput')?.value) || 0;
+              
+              const result = calculateTax(grossIncome, deductions);
+              
+              // Update displays
+              const grossDisplay = document.getElementById('grossIncomeDisplay');
+              const deductionsDisplay = document.getElementById('deductionsDisplay');
+              const taxDisplay = document.getElementById('taxPayableDisplay');
+              const taxPreview = document.getElementById('taxPreview');
+              const progressBar = document.getElementById('taxProgressBar');
+              
+              if (grossDisplay) grossDisplay.textContent = formatCurrency(grossIncome);
+              if (deductionsDisplay) deductionsDisplay.textContent = formatCurrency(deductions);
+              if (taxDisplay) taxDisplay.textContent = formatCurrency(result.tax);
+              if (taxPreview) taxPreview.textContent = formatCurrency(result.tax);
+              
+              // Update progress bar (assuming tax as percentage of income)
+              if (progressBar && grossIncome > 0) {
+                const percentage = Math.min((result.tax / grossIncome) * 100, 100);
+                progressBar.style.width = percentage + '%';
+              }
+            }
+            
+            // Set up event listeners when DOM is ready
+            function init() {
+              const updateBtn = document.getElementById('updateTaxBtn');
+              const grossInput = document.getElementById('grossIncomeInput');
+              const deductionsInput = document.getElementById('deductionsInput');
+              
+              if (updateBtn) {
+                updateBtn.addEventListener('click', updateTaxSummary);
+              }
+              
+              // Real-time update on Enter key
+              if (grossInput) {
+                grossInput.addEventListener('keypress', function(e) {
+                  if (e.key === 'Enter') updateTaxSummary();
+                });
+              }
+              if (deductionsInput) {
+                deductionsInput.addEventListener('keypress', function(e) {
+                  if (e.key === 'Enter') updateTaxSummary();
+                });
+              }
+            }
+            
+            if (document.readyState === 'loading') {
+              document.addEventListener('DOMContentLoaded', init);
+            } else {
+              init();
+            }
+          })();
+        `
+      }} />
     </Layout>
   )
 }
