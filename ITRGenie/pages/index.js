@@ -154,6 +154,142 @@ export default function Home() {
           <div className="mt-4 text-xs text-gray-500"><i className="fas fa-heart text-red-400"></i> Trusted by over 2 million+ taxpayers</div>
         </div>
       </div>
+        {/* Live with Expert Section - Unique Design */}
+      <div className="max-w-7xl mx-auto px-6 py-20">
+        <div className="relative bg-gradient-to-r from-indigo-600 to-purple-700 rounded-3xl overflow-hidden shadow-2xl">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 left-0 w-64 h-64 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/3 translate-y-1/3"></div>
+            <div className="absolute top-1/2 left-1/2 w-48 h-48 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+          </div>
+          
+          {/* Floating Elements */}
+          <div className="absolute top-10 right-10 animate-bounce-slow">
+            <i className="fas fa-video text-white/20 text-7xl"></i>
+          </div>
+          <div className="absolute bottom-10 left-10 animate-pulse-slow">
+            <i className="fas fa-headset text-white/20 text-6xl"></i>
+          </div>
+          
+          <div className="relative z-10 grid md:grid-cols-2 gap-8 p-8 md:p-12">
+            {/* Left Side - Content */}
+            <div className="text-white">
+              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm mb-6">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                </span>
+                <span>LIVE SESSION</span>
+                <span className="text-yellow-300 font-bold">● LIMITED SLOTS</span>
+              </div>
+              
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Live with an Expert
+              </h2>
+              <p className="text-xl mb-6 text-indigo-100">
+                Prefer live filing? Connect with a tax expert on Google Meet or Zoom
+              </p>
+              <p className="text-indigo-100 mb-8">
+                Complete your ITR in one sitting while an expert guides you through every step.
+              </p>
+              
+              <div className="space-y-3 mb-8">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                    <i className="fas fa-check text-white text-sm"></i>
+                  </div>
+                  <span>Google Meet or Zoom session</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                    <i className="fas fa-check text-white text-sm"></i>
+                  </div>
+                  <span>Expert files while you watch and learn</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                    <i className="fas fa-check text-white text-sm"></i>
+                  </div>
+                  <span>Same-day completion guaranteed</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                    <i className="fas fa-check text-white text-sm"></i>
+                  </div>
+                  <span>Get your queries answered instantly</span>
+                </div>
+              </div>
+              
+              <div className="flex flex-wrap gap-4">
+                <a href="/auth/signup?plan=live-expert">
+                  <button className="bg-white text-indigo-700 px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-gray-100 transition transform hover:scale-105">
+                    🎥 Book Live ITR Session →
+                  </button>
+                </a>
+                <button className="border-2 border-white/50 text-white px-6 py-3 rounded-xl font-medium hover:bg-white/10 transition">
+                  <i className="fas fa-phone-alt mr-2"></i> Call: +91-98765-43210
+                </button>
+              </div>
+            </div>
+            
+            {/* Right Side - Feature Cards */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center hover:bg-white/20 transition">
+                <i className="fas fa-video text-3xl text-yellow-300 mb-2"></i>
+                <p className="text-white font-semibold">Live Screen Share</p>
+                <p className="text-xs text-indigo-100">Watch expert fill your ITR</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center hover:bg-white/20 transition">
+                <i className="fas fa-clock text-3xl text-yellow-300 mb-2"></i>
+                <p className="text-white font-semibold">60-Minute Session</p>
+                <p className="text-xs text-indigo-100">Complete filing in 1 hour</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center hover:bg-white/20 transition">
+                <i className="fas fa-shield-alt text-3xl text-yellow-300 mb-2"></i>
+                <p className="text-white font-semibold">100% Secure</p>
+                <p className="text-xs text-indigo-100">Bank-grade encryption</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center hover:bg-white/20 transition">
+                <i className="fas fa-file-pdf text-3xl text-yellow-300 mb-2"></i>
+                <p className="text-white font-semibold">Instant Download</p>
+                <p className="text-xs text-indigo-100">Get ITR-V & acknowledgment</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Bottom Badge */}
+          <div className="relative z-10 bg-indigo-700/50 backdrop-blur-sm px-6 py-3 flex justify-between items-center flex-wrap gap-3">
+            <div className="flex items-center gap-4">
+              <i className="fas fa-star text-yellow-400"></i>
+              <span className="text-white text-sm">Trusted by over 50,000+ taxpayers</span>
+              <i className="fas fa-star text-yellow-400"></i>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-yellow-300 font-bold">LIVE</span>
+              <span className="text-white text-sm">Limited slots available today</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Add custom animations */}
+      <style jsx>{`
+        @keyframes bounce-slow {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-15px); }
+        }
+        @keyframes pulse-slow {
+          0%, 100% { opacity: 0.5; }
+          50% { opacity: 1; }
+        }
+        .animate-bounce-slow {
+          animation: bounce-slow 3s ease-in-out infinite;
+        }
+        .animate-pulse-slow {
+          animation: pulse-slow 4s ease-in-out infinite;
+        }
+      `}</style>
 
       {/* How it Works Section */}
       <div id="how-it-works" className="bg-gray-50 py-16 border-t">
