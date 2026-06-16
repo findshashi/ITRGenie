@@ -43,14 +43,39 @@ export default function Layout({ children }) {
 
   const handleLeadSubmit = async (e) => {
     e.preventDefault()
-    // Here you would send to your backend / Google Sheets / Supabase
+    // Replace with your actual backend endpoint / Google Sheets webhook
     console.log('Lead captured:', leadData)
-    // Simulate API call
     setSubmitted(true)
     setTimeout(() => {
       setShowBot(false)
     }, 2000)
   }
+
+  // SVG for GenieBot Face (used in logo and bot)
+  const GenieBotFace = ({ className = "w-8 h-8" }) => (
+    <svg className={className} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="25" fill="url(#gradient)" />
+      <defs>
+        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#4f46e5" />
+          <stop offset="100%" stopColor="#7c3aed" />
+        </linearGradient>
+      </defs>
+      {/* Turban / Genie hat */}
+      <path d="M35 35 Q50 25 65 35 L62 48 Q50 52 38 48 Z" fill="#fbbf24" />
+      <circle cx="50" cy="45" r="4" fill="#ffffff" />
+      {/* Eyes */}
+      <circle cx="38" cy="55" r="4" fill="#ffffff" />
+      <circle cx="62" cy="55" r="4" fill="#ffffff" />
+      <circle cx="38" cy="55" r="2" fill="#1f2937" />
+      <circle cx="62" cy="55" r="2" fill="#1f2937" />
+      {/* Smile */}
+      <path d="M43 65 Q50 75 57 65" stroke="#ffffff" strokeWidth="3" fill="none" strokeLinecap="round" />
+      {/* Robot ears / bolts */}
+      <circle cx="28" cy="50" r="4" fill="#fbbf24" />
+      <circle cx="72" cy="50" r="4" fill="#fbbf24" />
+    </svg>
+  )
 
   return (
     <>
@@ -58,21 +83,18 @@ export default function Layout({ children }) {
         <title>ITRGenie - Smart ITR Filing Platform</title>
         <meta name="description" content="File your ITR online with ITRGenie - real-time tax intelligence, expert assistance, and instant e-filing." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        {/* Custom Favicon - Bot + Genie */}
+        {/* Favicon remains the same */}
         <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%234f46e5' rx='20'/%3E%3Cpath d='M30 40 L70 40 L70 65 L30 65 Z' fill='%23fbbf24' stroke='%23ffffff' stroke-width='2'/%3E%3Ccircle cx='50' cy='52' r='6' fill='%234f46e5'/%3E%3Cpath d='M45 30 L55 30 L52 40 L48 40 Z' fill='%23fbbf24'/%3E%3Cpath d='M35 70 L65 70 L60 80 L40 80 Z' fill='%23ffffff' opacity='0.9'/%3E%3Ccircle cx='38' cy='50' r='2' fill='%234f46e5'/%3E%3Ccircle cx='62' cy='50' r='2' fill='%234f46e5'/%3E%3C/svg%3E" />
       </Head>
 
       <nav className="bg-white shadow-md sticky top-0 z-50 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Logo - ITRGenie with Bot+Genie icon */}
+            {/* Logo with GenieBot Face */}
             <div className="flex items-center">
               <Link href="/" className="flex items-center space-x-3 group">
                 <div className="relative">
-                  <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition">
-                    <i className="fas fa-robot text-white text-xl"></i>
-                    <i className="fas fa-magic text-yellow-300 text-xs absolute -bottom-1 -right-1"></i>
-                  </div>
+                  <GenieBotFace className="w-10 h-10 rounded-xl shadow-lg transition-transform group-hover:scale-105" />
                   <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-pulse"></div>
                 </div>
                 <span className="font-bold text-xl text-gray-800">
@@ -115,7 +137,7 @@ export default function Layout({ children }) {
               )}
             </div>
 
-            {/* Mobile button */}
+            {/* Mobile menu button */}
             <div className="md:hidden">
               <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-700">
                 <i className={`fas ${isMobileMenuOpen ? 'fa-times' : 'fa-bars'} text-2xl`}></i>
@@ -148,31 +170,22 @@ export default function Layout({ children }) {
 
       <main className="min-h-screen">{children}</main>
 
-      {/* Lead Capture Bot - Bottom Right */}
+      {/* Lead Capture Bot - Bottom Right with GenieBot Face */}
       {showBot && (
         <div className="fixed bottom-6 right-6 z-50">
           <div className="relative">
             {!isFormOpen ? (
-              // Closed state - Bot icon
-              <div 
-                onClick={() => setIsFormOpen(true)}
-                className="group cursor-pointer"
-              >
-                <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform animate-bounce-in">
-                  <div className="relative">
-                    <i className="fas fa-robot text-white text-2xl"></i>
-                    <i className="fas fa-magic text-yellow-300 text-sm absolute -bottom-1 -right-2"></i>
-                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-ping"></div>
-                  </div>
+              <div onClick={() => setIsFormOpen(true)} className="group cursor-pointer">
+                <div className="w-16 h-16 rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform animate-bounce-in bg-gradient-to-br from-indigo-500 to-purple-600">
+                  <GenieBotFace className="w-12 h-12" />
                 </div>
                 <div className="text-center text-xs font-semibold text-indigo-600 mt-1">ITRGenie</div>
               </div>
             ) : (
-              // Open form - Lead capture
               <div className="bg-white rounded-2xl shadow-2xl w-80 p-5 border border-indigo-100 animate-fadeInUp">
                 <div className="flex justify-between items-center mb-3">
                   <div className="flex items-center gap-2">
-                    <i className="fas fa-robot text-indigo-600"></i>
+                    <GenieBotFace className="w-6 h-6" />
                     <span className="font-bold text-gray-800">ITRGenie Assistant</span>
                   </div>
                   <button onClick={() => setIsFormOpen(false)} className="text-gray-400 hover:text-gray-600"><i className="fas fa-times"></i></button>
@@ -190,7 +203,6 @@ export default function Layout({ children }) {
                           className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-indigo-500"
                           required
                           pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
-                          title="Enter valid PAN (e.g., ABCDE1234F)"
                         />
                       </div>
                       <div>
@@ -202,7 +214,6 @@ export default function Layout({ children }) {
                           placeholder="9876543210"
                           className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-indigo-500"
                           required
-                          pattern="[0-9]{10}"
                         />
                       </div>
                       <div>
@@ -235,12 +246,13 @@ export default function Layout({ children }) {
         </div>
       )}
 
+      {/* Footer */}
       <footer className="bg-gray-900 text-white pt-12 pb-8 mt-16">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <i className="fas fa-robot text-indigo-400 text-xl"></i>
+                <GenieBotFace className="w-8 h-8" />
                 <h3 className="font-bold text-lg">ITRGenie</h3>
               </div>
               <p className="text-gray-400 text-sm">Smart ITR filing platform</p>
